@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Questionnaire</title>
+    <style>
+        body {
+            font-family: 'Bradley Hand', cursive;
+            margin: 0;
+            padding: 0;
+            background-color: #ffb7ce;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        form {
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .question {
+            margin-bottom: 15px;
+            display: none;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="radio"] {
+            margin-top: 10px;
+            padding: 10px;
+            width: 100%;
+            max-width: 100%;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="radio"] {
+            width: auto;
+        }
+
+        button, .big-small-button, .open-me-button {
+            font-family: 'Bradley Hand', cursive;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #thank-you-message {
+            display: none;
+            font-size: 1.2em;
+        }
+
+        .big-small-button {
+            margin-top: 10px;
+            padding: 20px;
+            background-color: #C41E3A;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            width: 150px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        .big-small-button:hover {
+            background-color: #9e1931;
+        }
+
+        .open-me-button {
+            margin-top: 20px;
+            padding: 15px 25px;
+            background-color: #C41E3A;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            width: auto;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .open-me-button:hover {
+            background-color: #9e1931;
+            transform: scale(1.1);
+        }
+
+        #gif-container {
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        #country-gif-container {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        #color-gif-container {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        #thank-you-message {
+            display: none;
+            font-size: 1.2em;
+        }
+
+        #big-small-gif-container {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <form id="questionnaire" action="https://formspree.io/f/mwpvwqlv" method="POST">
+        <!-- Envelope gif shown before "Open Me" button -->
+        <div id="gif-container">
+            <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHduNm5zdDdwbjMycHFyb2g3bXc0bmFkeWFmeG83OWFtYnc4ejZ6eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/THyN0bLrC9QPAGa5yu/giphy.gif" alt="Envelope gif" width="300" />
+        </div>
+
+        <!-- Open Me button -->
+        <button type="button" class="open-me-button" id="openMeButton" onclick="startQuestionnaire()">Open Me</button>
+
+        <!-- Loading GIF Container (Hidden Initially) -->
+        <div id="loading-gif-container" style="display:none;">
+            <img src="https://i.gifer.com/2iFb.gif" alt="Loading gif" width="300" />
+        </div>
+
+        <!-- Country GIF (This will be shown when the country question is displayed) -->
+        <div id="country-gif-container">
+            <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnowdTcwYjVpbWU5dXYzNHV3Nmh3azI3bzhobDBtdnNncW8yd2VyaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/w0hpqElNgofh1bdUD3/giphy.gif" alt="Country Gif" width="300" />
+        </div>
+
+        <!-- Color GIF (This will be shown when the color question is displayed) -->
+        <div id="color-gif-container">
+            <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExd3NtNGdsYzFtaG9wam1odXB0MXBsMWtvdW9wNjYyc2plcm95cnRlayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/YUokgDzCg4kKxsUnMo/giphy.gif" alt="Color Gif" width="300" />
+        </div>
+
+        <!-- Big or Small GIF (This will be shown when the Big or Small question is displayed) -->
+        <div id="big-small-gif-container">
+            <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdW5nbXRlZGFqNHU4eWdzczRtaWQ4Z2Q3aHE2ZHA0Y3VjdWcwbzFjNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/sUuIJ3AULgJ0hch42D/giphy.gif" alt="Big or Small Gif" width="300" />
+        </div>
+
+        <!-- Questions -->
+        <div class="question" id="q1">
+            <label for="q1Input">Pick a country:</label>
+            <input type="text" id="q1Input" name="q1" required>
+        </div>
+        <div class="question" id="q2">
+            <label for="q2Input">Pick a color:</label>
+            <input type="text" id="q2Input" name="q2" required>
+        </div>
+        <div class="question" id="q3">
+            <label>Big or Small?</label><br>
+            <button type="button" class="big-small-button" id="bigButton" onclick="nextQuestion('Big')">Big</button>
+            <button type="button" class="big-small-button" id="smallButton" onclick="nextQuestion('Small')">Small</button>
+        </div>
+        
+        <!-- Thank You Message with GIF -->
+        <div id="thank-you-message">
+            <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2pqMXF6MzF6eXNuNGthMzJpYThnMHpqMGNoMHNmcW11aG1hNWpxNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/SvK7Gxcq4QS4fNNjYH/giphy.gif" alt="Thank You GIF" width="300" />
+            <h3>Thank you! See you later!</h3>
+        </div>
+    </form>
+
+    <script>
+        let currentQuestion = 0;
+        const questions = document.querySelectorAll('.question');
+        const thankYouMessage = document.getElementById('thank-you-message');
+        const openMeButton = document.getElementById('openMeButton');
+        const loadingGifContainer = document.getElementById('loading-gif-container');
+        const gifContainer = document.getElementById('gif-container');
+        const countryGifContainer = document.getElementById('country-gif-container');
+        const colorGifContainer = document.getElementById('color-gif-container');
+        const bigSmallGifContainer = document.getElementById('big-small-gif-container');
+
+        // Show the first question
+        function showQuestion(index) {
+            if (index < questions.length) {
+                questions[index].style.display = 'block';
+                // Show the country GIF when the country question appears
+                if (index === 0) {
+                    countryGifContainer.style.display = 'block';
+                    colorGifContainer.style.display = 'none';
+                    bigSmallGifContainer.style.display = 'none';
+                }
+                // Show the color GIF when the color question appears
+                if (index === 1) {
+                    colorGifContainer.style.display = 'block';
+                    countryGifContainer.style.display = 'none';
+                    bigSmallGifContainer.style.display = 'none';
+                }
+                // Show the Big or Small GIF when that question appears
+                if (index === 2) {
+                    bigSmallGifContainer.style.display = 'block';
+                    countryGifContainer.style.display = 'none';
+                    colorGifContainer.style.display = 'none';
+                }
+            }
+        }
+
+        // Start the questionnaire when "Open Me" button is clicked
+        function startQuestionnaire() {
+            // Hide the "Open Me" button and envelope gif
+            openMeButton.style.display = 'none';
+            gifContainer.style.display = 'none';
+            // Show the loading gif for 2 seconds
+            loadingGifContainer.style.display = 'block';
+            setTimeout(() => {
+                // Hide the loading gif after 2 seconds
+                loadingGifContainer.style.display = 'none';
+                // Show the first question
+                showQuestion(currentQuestion);
+            }, 2000);
+        }
+
+        // Move to the next question
+        function nextQuestion(answer) {
+            // Hide the current question
+            questions[currentQuestion].style.display = 'none';
+            currentQuestion++;
+
+            // Hide the Big or Small GIF when the Big or Small question is answered
+            if (currentQuestion === 3) {
+                bigSmallGifContainer.style.display = 'none';
+            }
+
+            if (currentQuestion < questions.length) {
+                // Show the next question
+                showQuestion(currentQuestion);
+            } else {
+                // If all questions are done, show the "Thank You" message
+                thankYouMessage.style.display = 'block';
+            }
+        }
+
+        // Detect when the user hits "Enter" (for text inputs)
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && event.target.tagName === 'INPUT') {
+                // Trigger the next question when "Enter" is pressed
+                nextQuestion();
+            }
+        });
+    </script>
+</body>
+</html>
